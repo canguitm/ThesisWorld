@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Test3</string>
+    <string name="access_token">pk.eyJ1IjoiZ2FsZ29mYXJhIiwiYSI6ImNpeGlyN21ybzAwMGQyd25ydWcyeXIwNHYifQ.UJCzCFq3nC-sckDnb4yQGA</string>
+    <string name="all" />
+    <string name="send" />
+    <string name="severity_of_traffic" />
+    <string name="light" />
+    <string name="moderate" />
+    <string name="heavy" />
+    <string name="cause_of_traffic" />
+</resources>
