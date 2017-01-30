@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +23,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.MapboxAccountManager;
+import com.mapbox.mapboxsdk.annotations.Icon;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -73,13 +77,14 @@ public class activity_offline_simple extends AppCompatActivity {
 
     private Button btn;
 
-    static String getLong, getLat;
+    static String getLong, getLat, result, result1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Mapbox access token is configured here. This needs to be called either in your application
+        // Mapbox
+        // token is configured here. This needs to be called either in your application
         // object or in the same activity which contains the mapview.
         MapboxAccountManager.start(this, getString(R.string.access_token));
 
@@ -112,6 +117,7 @@ public class activity_offline_simple extends AppCompatActivity {
 
         locationServices = LocationServices.getLocationServices(activity_offline_simple.this);
 
+
         //Get current GPS
         floatingActionButton = (FloatingActionButton) findViewById(R.id.location_toggle_fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -133,7 +139,7 @@ public class activity_offline_simple extends AppCompatActivity {
         });
 
         myDb = new DatabaseHelper(this);
-        myDb = new DatabaseHelper(this);
+
     }
 
     ;
@@ -147,6 +153,7 @@ public class activity_offline_simple extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         mapView.onResume();
+        update_location();
     }
 
     @Override
@@ -379,7 +386,11 @@ public class activity_offline_simple extends AppCompatActivity {
         if (enabled) {
             // If we have the last location of the user, we can move the camera to that position.
             Location lastLocation = locationServices.getLastLocation();
-            getLong = String.valueOf(new LatLng(lastLocation));
+
+            result = String.valueOf(new LatLng(lastLocation));
+            getLat = result.substring(result.indexOf("latitude=") + 9, result.indexOf(","));
+            getLong = result.substring(result.indexOf("longitude=") + 10, result.indexOf(", alt"));
+
             if (lastLocation != null) {
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation), 16));
             }
@@ -405,6 +416,14 @@ public class activity_offline_simple extends AppCompatActivity {
         // Enable or disable the location layer on the map
         map.setMyLocationEnabled(enabled);
     }
+
+    public static String getLat()
+    {
+
+        return getLat;
+
+    }
+
 
     public static String getLong()
     {
@@ -457,7 +476,7 @@ public class activity_offline_simple extends AppCompatActivity {
         }
     }
 
-    public static void update_location()
+    public void update_location()
     {
 
         Cursor res = myDb.getAllData();
@@ -470,23 +489,45 @@ public class activity_offline_simple extends AppCompatActivity {
         StringBuffer buffer = new StringBuffer();
         while (res.moveToNext()){
             Integer id = Integer.parseInt(res.getString(0));
-            String timestamp = res.getString(1);
-            Double lat = Double.parseDouble(res.getString(2));
-            Double lang = Double.parseDouble(res.getString(3));
-            String severity = res.getString(4);
-            String cause = res.getString(5);
+            final String timestamp = res.getString(1);
+            final Double lat = Double.parseDouble(res.getString(2));
+            final Double lang = Double.parseDouble(res.getString(3));
+            final String severity = res.getString(4);
+            final String cause = res.getString(5);
 
-            LatLng found = new LatLng(lat,lang);
             String details = "Date: " + timestamp + "     Cause: " + cause;
 
             mapView.getMapAsync(new OnMapReadyCallback() {
 
+
+                IconFactory iconFactory = IconFactory.getInstance(activity_offline_simple.this);
+                Drawable iconDrawableGreen = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.green_marker);
+                Drawable iconDrawableYellow = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.yellow_marker);
+                Icon iconGreen = iconFactory.fromDrawable(iconDrawableGreen);
+                Icon iconYellow = iconFactory.fromDrawable(iconDrawableYellow);
+
                 @Override
                 public void onMapReady(MapboxMap mapboxMap) {
-                    mapboxMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(8.43434, 124.6434))
-                            .title("HFUUCKS!")
-                            .snippet("Welcome to my marker."));
+                    if (severity.equalsIgnoreCase("Light")) {
+                        mapboxMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lang))
+                                .title(cause)
+                                .snippet(timestamp)
+                                .icon(iconGreen));
+                    }
+                    else if (severity.equalsIgnoreCase("Moderate")) {
+                        mapboxMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lang))
+                                .title(cause)
+                                .snippet(timestamp)
+                                .icon(iconYellow));
+                    }
+                    else {
+                        mapboxMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lang))
+                                .title(cause)
+                                .snippet(timestamp));
+                    }
 
                 }
 
@@ -495,6 +536,12 @@ public class activity_offline_simple extends AppCompatActivity {
 
         }
 
+
     }
+
+    public void addMarker(){
+
+    }
+
 
 }

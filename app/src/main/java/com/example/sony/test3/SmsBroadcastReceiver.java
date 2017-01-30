@@ -25,12 +25,12 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
     public static Double lat;
     public static String severity;
     public static String cause;
-    public static String trylang= "HEHE";
+    activity_offline_simple workples = new activity_offline_simple();
 
 
 
     public void onReceive(Context context, Intent intent) {
-
+        workples = new activity_offline_simple();
         Bundle intentExtras = intent.getExtras();
 
         if (intentExtras != null) {
@@ -48,16 +48,20 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
                 StringTokenizer tokens = new StringTokenizer(smsBody, "/");
                 timestamp = tokens.nextToken();
-                lng = Double.parseDouble(tokens.nextToken());
                 lat = Double.parseDouble(tokens.nextToken());
+                lng = Double.parseDouble(tokens.nextToken());
                 severity = tokens.nextToken();
                 cause = tokens.nextToken();
 
                 Toast.makeText(context, "New Traffic Report Added", Toast.LENGTH_LONG).show();
             }
 
+
+
+
             DatabaseHelper.putSmsToDatabase(timestamp, lat, lng, severity, cause, context);
-            activity_offline_simple.update_location();
+            workples.update_location();
+
         }
     }
 

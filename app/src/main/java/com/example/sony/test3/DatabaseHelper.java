@@ -34,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public static void putSmsToDatabase(String timestamp, Double lat,Double lng, String severity, String cause, Context context ) {
+    public static void putSmsToDatabase(String timestamp, Double lat, Double lng, String severity, String cause, Context context ) {
         DatabaseHelper dataBaseHelper = new DatabaseHelper(context);
         SQLiteDatabase db = dataBaseHelper.getWritableDatabase();
 
