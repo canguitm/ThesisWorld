@@ -2,7 +2,10 @@ package com.example.sony.test3;
 
 import android.content.ContentValues;
 import android.content.Context;
+<<<<<<< HEAD
 import android.content.Intent;
+=======
+>>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -16,7 +19,11 @@ import java.util.StringTokenizer;
  * Created by user on 31/12/2016.
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
+<<<<<<< HEAD
     public static final String DATABASE_NAME = "Reports.db";
+=======
+    public static final String DATABASE_NAME = "Student.db";
+>>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
 
 
     public DatabaseHelper(Context context) {
@@ -38,6 +45,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static void putSmsToDatabase(String timestamp, Double lat, Double lng, String severity, String cause, Context context ) {
         DatabaseHelper dataBaseHelper = new DatabaseHelper(context);
         SQLiteDatabase db = dataBaseHelper.getWritableDatabase();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
         ContentValues values = new ContentValues();
 
         values.put("timestamp", timestamp);
@@ -48,7 +59,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert("report_table", null, values);
         if(result != -1)
+<<<<<<< HEAD
             Toast.makeText(context, "Inserted data to DB", Toast.LENGTH_SHORT).show();
+=======
+            Toast.makeText(context, "Inserted data", Toast.LENGTH_SHORT).show();
+>>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
         else
             Toast.makeText(context, "Error in inserting SMS to database", Toast.LENGTH_SHORT).show();
 
