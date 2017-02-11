@@ -1,7 +1,9 @@
 package com.example.sony.test3;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,6 +13,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -18,9 +21,14 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.MapboxAccountManager;
@@ -46,6 +54,9 @@ import com.mapbox.mapboxsdk.offline.OfflineTilePyramidRegionDefinition;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class activity_offline_simple extends AppCompatActivity {
 
@@ -95,6 +106,16 @@ public class activity_offline_simple extends AppCompatActivity {
     Drawable red_weather, red_unknown, red_accident;
     Icon icon_red_weather, icon_red_unknown, icon_red_accident;
 
+    private Context mContext;
+    private Activity mActivity;
+
+    private RelativeLayout mRelativeLayout;
+    private Button mButton;
+
+    private PopupWindow mPopupWindow;
+
+    public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,10 +156,8 @@ public class activity_offline_simple extends AppCompatActivity {
 
         getSms = new MainActivity();
         //Check Location
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getPermissionToReadSMS();
-            checkLocationPermission();
-
+        if(checkAndRequestPermissions()) {
+            // carry on the normal flow, as the case of  permissions  granted.
         }
         // Set up the MapView
         mapView = (MapView) findViewById(R.id.mapView);
@@ -410,7 +429,23 @@ public class activity_offline_simple extends AppCompatActivity {
         });
     }
 
-
+    private  boolean checkAndRequestPermissions() {
+        int permissionSendMessage = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.SEND_SMS);
+        int locationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (locationPermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if (permissionSendMessage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.SEND_SMS);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return false;
+        }
+        return true;
+    }
 
 
     private void toggleGps(boolean enableGps) {
@@ -434,9 +469,6 @@ public class activity_offline_simple extends AppCompatActivity {
             Location lastLocation = locationServices.getLastLocation();
 
             if (lastLocation != null) {
-                result = String.valueOf(new LatLng(lastLocation));
-                getLat = result.substring(result.indexOf("latitude=") + 9, result.indexOf(","));
-                getLong = result.substring(result.indexOf("longitude=") + 10, result.indexOf(", alt"));
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation), 16));
             }
 
@@ -457,6 +489,7 @@ public class activity_offline_simple extends AppCompatActivity {
             floatingActionButton.setImageResource(R.drawable.ic_location_disabled_24dp);
         } else {
             floatingActionButton.setImageResource(R.drawable.ic_my_location_24dp);
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(8.48222,124.64722), 10));
         }
         // Enable or disable the location layer on the map
         map.setMyLocationEnabled(enabled);
@@ -481,92 +514,84 @@ public class activity_offline_simple extends AppCompatActivity {
 
     }
 
-
-
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    public boolean checkLocationPermission(){
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Asking user if explanation is needed
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-                //Prompt the user once explanation has been shown
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-
-
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     @Override
-    public void onRequestPermissionsResult(
-            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSIONS_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                enableLocation(true);
-            }
-        }
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        Log.d(TAG, "Permission callback called-------");
+        switch (requestCode) {
+            case REQUEST_ID_MULTIPLE_PERMISSIONS: {
 
-        else if (requestCode == READ_SMS_PERMISSIONS_REQUEST) {
-            if (grantResults.length == 1 &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Read SMS permission granted", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Read SMS permission denied", Toast.LENGTH_SHORT).show();
-            }
-
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    public void getPermissionToReadSMS() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale(
-                        Manifest.permission.READ_SMS)) {
-                    Toast.makeText(this, "Please allow permission!", Toast.LENGTH_SHORT).show();
+                Map<String, Integer> perms = new HashMap<>();
+                // Initialize the map with both permissions
+                perms.put(Manifest.permission.SEND_SMS, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
+                // Fill with actual results from user
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < permissions.length; i++)
+                        perms.put(permissions[i], grantResults[i]);
+                    // Check for both permissions
+                    if (perms.get(Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        Log.d(TAG, "sms & location services permission granted");
+                        // process the normal flow
+                        //else any one or both the permissions are not granted
+                    } else {
+                        Log.d(TAG, "Some permissions are not granted ask again ");
+                        //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
+//                        // shouldShowRequestPermissionRationale will return true
+                        //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                            showDialogOK("SMS and Location Services Permission required for this app",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            switch (which) {
+                                                case DialogInterface.BUTTON_POSITIVE:
+                                                    checkAndRequestPermissions();
+                                                    break;
+                                                case DialogInterface.BUTTON_NEGATIVE:
+                                                    // proceed with logic by disabling the related features or quit the app.
+                                                    break;
+                                            }
+                                        }
+                                    });
+                        }
+                        //permission is denied (and never ask again is  checked)
+                        //shouldShowRequestPermissionRationale will return false
+                        else {
+                            Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG)
+                                    .show();
+                            //                            //proceed with logic by disabling the related features or quit the app.
+                        }
+                    }
                 }
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.READ_SMS},
-                        READ_SMS_PERMISSIONS_REQUEST);
-            }
         }
+
     }
 
+    private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", okListener)
+                .create()
+                .show();
+    }
 
     public void onRequestClick(View view) {
 
             SmsManager smsManager = SmsManager.getDefault();
         //+639283148474 - sms server, +639057767601 -mark
-            smsManager.sendTextMessage("+639268247123", null, "Request", null, null);
+            smsManager.sendTextMessage("+639268241111", null, "Request", null, null);
             Toast.makeText(activity_offline_simple.this, "Request Sent", Toast.LENGTH_SHORT).show();
+
+
+
 
     }
 
     public void update_location()
     {
-
-
 
 
         Cursor res = myDb.getAllData();
@@ -598,14 +623,14 @@ public class activity_offline_simple extends AppCompatActivity {
                                 .snippet(timestamp)
                                 .icon(icon_green_weather));
                     }
-                    else if (severity.equalsIgnoreCase("Light") && cause.equalsIgnoreCase("Accident")) {
+                    if (severity.equalsIgnoreCase("Light") && cause.equalsIgnoreCase("Accident")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
                                 .title(cause)
                                 .snippet(timestamp)
                                 .icon(icon_green_accident));/////
                     }
-                    else if (severity.equalsIgnoreCase("Light") && cause.equalsIgnoreCase("Unknown")) {
+                    if (severity.equalsIgnoreCase("Light") && cause.equalsIgnoreCase("Unknown")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
                                 .title(cause)
@@ -614,21 +639,21 @@ public class activity_offline_simple extends AppCompatActivity {
                     }
 
                     //MODERATE
-                    else if (severity.equalsIgnoreCase("Moderate") && cause.equalsIgnoreCase("Weather")) {
+                    if (severity.equalsIgnoreCase("Moderate") && cause.equalsIgnoreCase("Weather")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
                                 .title(cause)
                                 .snippet(timestamp)
                                 .icon(icon_yellow_weather));/////
                     }
-                    else if (severity.equalsIgnoreCase("Moderate") && cause.equalsIgnoreCase("Accident")) {
+                    if (severity.equalsIgnoreCase("Moderate") && cause.equalsIgnoreCase("Accident")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
                                 .title(cause)
                                 .snippet(timestamp)
                                 .icon(icon_yellow_accident));
                     }
-                    else if (severity.equalsIgnoreCase("Moderate") && cause.equalsIgnoreCase("Unknown")) {
+                    if (severity.equalsIgnoreCase("Moderate") && cause.equalsIgnoreCase("Unknown")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
                                 .title(cause)
@@ -637,21 +662,21 @@ public class activity_offline_simple extends AppCompatActivity {
                     }
 
                     //HEAVY
-                    else if (severity.equalsIgnoreCase("Heavy") && cause.equalsIgnoreCase("Weather")) {
+                    if (severity.equalsIgnoreCase("Heavy") && cause.equalsIgnoreCase("Weather")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
                                 .title(cause)
                                 .snippet(timestamp)
                                 .icon(icon_red_weather));/////
                     }
-                    else if (severity.equalsIgnoreCase("Heavy") && cause.equalsIgnoreCase("Accident")) {
+                    if (severity.equalsIgnoreCase("Heavy") && cause.equalsIgnoreCase("Accident")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
                                 .title(cause)
                                 .snippet(timestamp)
                                 .icon(icon_red_accident));
                     }
-                    else {
+                    if (severity.equalsIgnoreCase("Heavy") && cause.equalsIgnoreCase("Unknown")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
                                 .title(cause)
@@ -671,7 +696,7 @@ public class activity_offline_simple extends AppCompatActivity {
 
                 }
 
-            });
+            });//end of mapasync
 
 
         }

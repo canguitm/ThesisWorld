@@ -65,14 +65,17 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
             if(sender.equals("+639268247123")) {
                 DatabaseHelper.putSmsToDatabase(timestamp, lat, lng, severity, cause, context);
-                addMarkers.update_location();
+                //start activity
+                Intent i = new Intent();
+                i.setClassName("com.example.sony.test3", "com.example.sony.test3.activity_offline_simple");
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
+                //addMarkers.update_location();
 
             }
-           // workples.update_location();
 
         }
 
-      //  workples.update_location();
     }
 
 }
