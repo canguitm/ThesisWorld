@@ -27,14 +27,17 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
     DatabaseHelper myDb;
     Button btnViewAll;
-    private RadioGroup radioSeverityGroup, radioCauseGroup;
-    private RadioButton radioSeverityButton, radioCauseButton;
+    private RadioButton CauseRadioButton1, CauseRadioButton2, CauseRadioButton3;
+    private RadioButton SeverityRadioButton1, SeverityRadioButton2, SeverityRadioButton3;
+    String severityResult, causeResult;
 
     ArrayList<String> smsMessagesList = new ArrayList<>();
     ListView messages;
@@ -42,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
     SmsManager smsManager = SmsManager.getDefault();
     private static MainActivity inst;
     private static final int READ_SMS_PERMISSIONS_REQUEST = 1;
+    public static String res;
+
+    //String mydate = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(Calendar.getInstance().getTime());
 
     String mydate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
 
@@ -58,10 +64,15 @@ public class MainActivity extends AppCompatActivity {
         myDb = new DatabaseHelper(this);
         btnViewAll = (Button) findViewById(R.id.all);
 
-
         messages = (ListView) findViewById(R.id.messages);
-        radioSeverityGroup=(RadioGroup)findViewById(R.id.severity);
-        radioCauseGroup=(RadioGroup)findViewById(R.id.cause);
+
+        SeverityRadioButton1=(RadioButton)findViewById(R.id.light);
+        SeverityRadioButton2=(RadioButton)findViewById(R.id.moderate);
+        SeverityRadioButton3=(RadioButton)findViewById(R.id.heavy);
+
+        CauseRadioButton1=(RadioButton)findViewById(R.id.weather);
+        CauseRadioButton2=(RadioButton)findViewById(R.id.accident);
+        CauseRadioButton3=(RadioButton)findViewById(R.id.undetermined);
 
         arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, smsMessagesList);
         messages.setAdapter(arrayAdapter);
@@ -144,29 +155,29 @@ public class MainActivity extends AppCompatActivity {
             getPermissionToReadSMS();
         } else {
 
-            int selectSeverity=radioSeverityGroup.getCheckedRadioButtonId();
-            int selectCause=radioCauseGroup.getCheckedRadioButtonId();
+            if (SeverityRadioButton1.isChecked())
+                severityResult="Light";
+            else if (SeverityRadioButton2.isChecked())
+                severityResult="Moderate";
+            else
+                severityResult="Heavy";
 
-            radioSeverityButton=(RadioButton)findViewById(selectSeverity);
-            radioCauseButton=(RadioButton)findViewById(selectCause);
+            if (CauseRadioButton1.isChecked())
+                causeResult="Weather";
+            else if (CauseRadioButton2.isChecked())
+                causeResult="Accident";
+            else
+                causeResult="Unknown";
+
 
             //Change number to SMS gateway number
             //smsManager.sendTextMessage("+639268247123", null, mydate + "/" + Double.toString(MapsActivity.getLong()) + "/" + Double.toString(MapsActivity.getLat()) + "/" + radioSeverityButton.getText().toString() + "/" + radioCauseButton.getText().toString(), null, null);
             // Toast.makeText(this, "Message send!", Toast.LENGTH_SHORT).show();
-<<<<<<< HEAD
-            smsManager.sendTextMessage("+639057767601", null, mydate + "/" + activity_offline_simple.getLat() + "/" + activity_offline_simple.getLong() + "/" + radioSeverityButton.getText().toString() + "/" + radioCauseButton.getText().toString(), null, null);
-=======
-            smsManager.sendTextMessage("+639268247123", null, mydate + "/" + activity_offline_simple.getLat() + "/" + activity_offline_simple.getLong() + "/" + radioSeverityButton.getText().toString() + "/" + radioCauseButton.getText().toString(), null, null);
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
+            smsManager.sendTextMessage("+639268247123", null, mydate + "/" + activity_offline_simple.getLat() + "/" + activity_offline_simple.getLong() + "/" + severityResult + "/" + causeResult, null, null);
 
             startActivity(new Intent(MainActivity.this, activity_offline_simple.class));
 
         }
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
     }
 
 }

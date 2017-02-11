@@ -16,10 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-<<<<<<< HEAD
 import android.telephony.SmsManager;
-=======
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -79,7 +76,6 @@ public class activity_offline_simple extends AppCompatActivity {
 
     static DatabaseHelper myDb;
 
-<<<<<<< HEAD
     private Button btn, requestBtn;
 
     static String getLong, getLat, result;
@@ -88,11 +84,17 @@ public class activity_offline_simple extends AppCompatActivity {
 
     private static final int READ_SMS_PERMISSIONS_REQUEST = 1;
 
-=======
-    private Button btn;
+    IconFactory iconFactory;
 
-    static String getLong, getLat, result, result1;
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
+    Drawable green_weather, green_accident, green_unknown;
+    Icon icon_green_weather, icon_green_accident, icon_green_unknown;
+
+    Drawable yellow_weather, yellow_unknown, yellow_accident;
+    Icon icon_yellow_weather,icon_yellow_unknown, icon_yellow_accident;
+
+    Drawable red_weather, red_unknown, red_accident;
+    Icon icon_red_weather, icon_red_unknown, icon_red_accident;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,20 +108,38 @@ public class activity_offline_simple extends AppCompatActivity {
         // This contains the MapView in XML and needs to be called after the account manager
         setContentView(R.layout.activity_offline_simple);
 
-<<<<<<< HEAD
+        iconFactory = IconFactory.getInstance(activity_offline_simple.this);
+        //GREEN
+        green_weather = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.green_weather_marker);
+        green_unknown = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.green_unknown_marker);
+        green_accident = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.green_accident_marker);
+        icon_green_weather = iconFactory.fromDrawable(green_weather);
+        icon_green_unknown = iconFactory.fromDrawable(green_unknown);
+        icon_green_accident = iconFactory.fromDrawable(green_accident);
+
+        //YELLOW
+        yellow_weather = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.yellow_weather_marker);
+        yellow_unknown = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.yellow_unknown_marker);
+        yellow_accident = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.yellow_accident_marker);
+        icon_yellow_weather = iconFactory.fromDrawable(yellow_weather);
+        icon_yellow_unknown = iconFactory.fromDrawable(yellow_unknown);
+        icon_yellow_accident = iconFactory.fromDrawable(yellow_accident);
+
+        //RED
+        red_weather = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.red_weather_marker);
+        red_unknown = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.red_unknown_marker);
+        red_accident = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.red_accident_marker);
+        icon_red_weather = iconFactory.fromDrawable(red_weather);
+        icon_red_unknown = iconFactory.fromDrawable(red_unknown);
+        icon_red_accident = iconFactory.fromDrawable(red_accident);
+
         getSms = new MainActivity();
         //Check Location
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getPermissionToReadSMS();
             checkLocationPermission();
 
-=======
-        //Check Location
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkLocationPermission();
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
         }
-
         // Set up the MapView
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -127,6 +147,8 @@ public class activity_offline_simple extends AppCompatActivity {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
                 map = mapboxMap;
+
+
             }
         });
 
@@ -138,10 +160,6 @@ public class activity_offline_simple extends AppCompatActivity {
 
         checker();
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
         locationServices = LocationServices.getLocationServices(activity_offline_simple.this);
 
 
@@ -157,10 +175,7 @@ public class activity_offline_simple extends AppCompatActivity {
         });
 
         btn = (Button)findViewById(R.id.report);
-<<<<<<< HEAD
         requestBtn = (Button)findViewById(R.id.request);
-=======
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,16 +186,9 @@ public class activity_offline_simple extends AppCompatActivity {
 
         myDb = new DatabaseHelper(this);
 
-<<<<<<< HEAD
-
     }
 
 
-=======
-    }
-
-    ;
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
 
     // Bottom navigation bar button clicks are handled here.
     // Download offline button
@@ -209,7 +217,7 @@ public class activity_offline_simple extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
+//        mapView.onDestroy();
     }
 
     @Override
@@ -425,18 +433,10 @@ public class activity_offline_simple extends AppCompatActivity {
             // If we have the last location of the user, we can move the camera to that position.
             Location lastLocation = locationServices.getLastLocation();
 
-<<<<<<< HEAD
             if (lastLocation != null) {
                 result = String.valueOf(new LatLng(lastLocation));
                 getLat = result.substring(result.indexOf("latitude=") + 9, result.indexOf(","));
                 getLong = result.substring(result.indexOf("longitude=") + 10, result.indexOf(", alt"));
-=======
-            result = String.valueOf(new LatLng(lastLocation));
-            getLat = result.substring(result.indexOf("latitude=") + 9, result.indexOf(","));
-            getLong = result.substring(result.indexOf("longitude=") + 10, result.indexOf(", alt"));
-
-            if (lastLocation != null) {
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation), 16));
             }
 
@@ -464,13 +464,9 @@ public class activity_offline_simple extends AppCompatActivity {
 
     public static String getLat()
     {
-<<<<<<< HEAD
         Location lastLocation = locationServices.getLastLocation();
         result = String.valueOf(new LatLng(lastLocation));
         getLat = result.substring(result.indexOf("latitude=") + 9, result.indexOf(","));
-=======
-
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
         return getLat;
 
     }
@@ -478,13 +474,9 @@ public class activity_offline_simple extends AppCompatActivity {
 
     public static String getLong()
     {
-<<<<<<< HEAD
         Location lastLocation = locationServices.getLastLocation();
         result = String.valueOf(new LatLng(lastLocation));
         getLong = result.substring(result.indexOf("longitude=") + 10, result.indexOf(", alt"));
-=======
-
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
         return getLong;
 
     }
@@ -531,7 +523,6 @@ public class activity_offline_simple extends AppCompatActivity {
                 enableLocation(true);
             }
         }
-<<<<<<< HEAD
 
         else if (requestCode == READ_SMS_PERMISSIONS_REQUEST) {
             if (grantResults.length == 1 &&
@@ -566,15 +557,17 @@ public class activity_offline_simple extends AppCompatActivity {
     public void onRequestClick(View view) {
 
             SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage("+639057767601", null, "Request", null, null);
+        //+639283148474 - sms server, +639057767601 -mark
+            smsManager.sendTextMessage("+639268247123", null, "Request", null, null);
             Toast.makeText(activity_offline_simple.this, "Request Sent", Toast.LENGTH_SHORT).show();
 
-=======
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
     }
 
     public void update_location()
     {
+
+
+
 
         Cursor res = myDb.getAllData();
         if (res.getCount() == 0){
@@ -592,69 +585,90 @@ public class activity_offline_simple extends AppCompatActivity {
             final String severity = res.getString(4);
             final String cause = res.getString(5);
 
-<<<<<<< HEAD
 
             mapView.getMapAsync(new OnMapReadyCallback() {
 
                 @Override
                 public void onMapReady(MapboxMap mapboxMap) {
-
-                    IconFactory iconFactory = IconFactory.getInstance(activity_offline_simple.this);
-                    Drawable iconDrawableGreen = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.marker4);
-                    Drawable iconDrawableYellow = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.marker5);
-                    Icon iconGreen = iconFactory.fromDrawable(iconDrawableGreen);
-                    Icon iconYellow = iconFactory.fromDrawable(iconDrawableYellow);
-=======
-            String details = "Date: " + timestamp + "     Cause: " + cause;
-
-            mapView.getMapAsync(new OnMapReadyCallback() {
-
-
-                IconFactory iconFactory = IconFactory.getInstance(activity_offline_simple.this);
-                Drawable iconDrawableGreen = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.green_marker);
-                Drawable iconDrawableYellow = ContextCompat.getDrawable(activity_offline_simple.this, R.drawable.yellow_marker);
-                Icon iconGreen = iconFactory.fromDrawable(iconDrawableGreen);
-                Icon iconYellow = iconFactory.fromDrawable(iconDrawableYellow);
-
-                @Override
-                public void onMapReady(MapboxMap mapboxMap) {
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
-                    if (severity.equalsIgnoreCase("Light")) {
+                    //LIGHT
+                    if (severity.equalsIgnoreCase("Light") && cause.equalsIgnoreCase("Weather")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
                                 .title(cause)
                                 .snippet(timestamp)
-                                .icon(iconGreen));
-<<<<<<< HEAD
-                       // Toast.makeText(activity_offline_simple.this, "Add Light", Toast.LENGTH_SHORT).show();
-=======
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
+                                .icon(icon_green_weather));
                     }
-                    else if (severity.equalsIgnoreCase("Moderate")) {
+                    else if (severity.equalsIgnoreCase("Light") && cause.equalsIgnoreCase("Accident")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
                                 .title(cause)
                                 .snippet(timestamp)
-                                .icon(iconYellow));
-<<<<<<< HEAD
-                       // Toast.makeText(activity_offline_simple.this, "Add Moderate", Toast.LENGTH_SHORT).show();
-=======
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
+                                .icon(icon_green_accident));/////
+                    }
+                    else if (severity.equalsIgnoreCase("Light") && cause.equalsIgnoreCase("Unknown")) {
+                        mapboxMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lang))
+                                .title(cause)
+                                .snippet(timestamp)
+                                .icon(icon_green_unknown));
+                    }
+
+                    //MODERATE
+                    else if (severity.equalsIgnoreCase("Moderate") && cause.equalsIgnoreCase("Weather")) {
+                        mapboxMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lang))
+                                .title(cause)
+                                .snippet(timestamp)
+                                .icon(icon_yellow_weather));/////
+                    }
+                    else if (severity.equalsIgnoreCase("Moderate") && cause.equalsIgnoreCase("Accident")) {
+                        mapboxMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lang))
+                                .title(cause)
+                                .snippet(timestamp)
+                                .icon(icon_yellow_accident));
+                    }
+                    else if (severity.equalsIgnoreCase("Moderate") && cause.equalsIgnoreCase("Unknown")) {
+                        mapboxMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lang))
+                                .title(cause)
+                                .snippet(timestamp)
+                                .icon(icon_yellow_unknown));
+                    }
+
+                    //HEAVY
+                    else if (severity.equalsIgnoreCase("Heavy") && cause.equalsIgnoreCase("Weather")) {
+                        mapboxMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lang))
+                                .title(cause)
+                                .snippet(timestamp)
+                                .icon(icon_red_weather));/////
+                    }
+                    else if (severity.equalsIgnoreCase("Heavy") && cause.equalsIgnoreCase("Accident")) {
+                        mapboxMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lang))
+                                .title(cause)
+                                .snippet(timestamp)
+                                .icon(icon_red_accident));
                     }
                     else {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
                                 .title(cause)
+                                .snippet(timestamp)
+                                .icon(icon_red_unknown));
+                    }
+                    //ELSE
+/*
+                    else {
+
+                        mapboxMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lang))
+                                .title(cause)
                                 .snippet(timestamp));
-<<<<<<< HEAD
-                       // Toast.makeText(activity_offline_simple.this, "Add Heavy", Toast.LENGTH_SHORT).show();
                     }
+*/
 
-
-=======
-                    }
-
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
                 }
 
             });
@@ -663,17 +677,9 @@ public class activity_offline_simple extends AppCompatActivity {
         }
 
 
-<<<<<<< HEAD
 
     }
 
-=======
-    }
-
-    public void addMarker(){
-
-    }
->>>>>>> 56758e1060b54d1eee659f9192454bc65795767a
 
 
 }

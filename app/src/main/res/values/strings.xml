@@ -8,4 +8,22 @@
     <string name="moderate" />
     <string name="heavy" />
     <string name="cause_of_traffic" />
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title"/>
+    <string name="slide_1_desc">Introducing KAMATIS, the most efficient mobile application to identify traffic situations in CDO is finally here!</string>
+
+    <string name="slide_2_title">SMS - Based</string>
+    <string name="slide_2_desc">With its SMS capability, you can fully experience the applications capability without the use of internet connection.</string>
+
+    <string name="slide_3_title">Traffic Report System</string>
+    <string name="slide_3_desc">Report traffic related concerns anytime, anywhere.</string>
+
+    <string name="slide_4_title">Skip Traffic</string>
+    <string name="slide_4_desc">Receive traffic related notifications to be able to plan routes efficiently and effectively.  </string>
+    <string name="traffic_cause">TRAFFIC CAUSE</string>
+    <string name="traffic_severity">TRAFFIC SEVERITY</string>
+
 </resources>
