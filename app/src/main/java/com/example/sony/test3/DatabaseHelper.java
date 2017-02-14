@@ -44,9 +44,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert("report_table", null, values);
         if(result != -1)
-            Toast.makeText(context, "Inserted data to DB", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "New Traffic Report", Toast.LENGTH_SHORT).show();
         else
-            Toast.makeText(context, "Error in inserting SMS to database", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Error in adding Traffic Report", Toast.LENGTH_SHORT).show();
 
         db.close();
     }

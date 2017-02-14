@@ -25,5 +25,11 @@
     <string name="slide_4_desc">Receive traffic related notifications to be able to plan routes efficiently and effectively.  </string>
     <string name="traffic_cause">TRAFFIC CAUSE</string>
     <string name="traffic_severity">TRAFFIC SEVERITY</string>
+    <string name="dialog_title">Send Bogus Report</string>
+    <string name="dialog_message">Are you sure you want to report this marker as bogus?</string>
+    <string name="request_title">Request Traffic Update</string>
+    <string name="request_message">Are you sure you want to request for new traffic updates?</string>
+    <string name="downloadmap_title">Download CDO Map</string>
+    <string name="downloadmap_message">Are you sure you want to download the CDO map offline?</string>
 
 </resources>

@@ -50,8 +50,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
                 sender = address;
 
-                if(address.equals("+639268247123")) {
-                    abortBroadcast();
+                //if(address.equals("+639268247123")) {
                     StringTokenizer tokens = new StringTokenizer(smsBody, "/");
                     timestamp = tokens.nextToken();
                     lat = Double.parseDouble(tokens.nextToken());
@@ -60,19 +59,21 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                     cause = tokens.nextToken();
 
                    // Toast.makeText(getContext(), "Received New Traffic Report", Toast.LENGTH_LONG).show();
-                }
+                //}
             }
 
-            if(sender.equals("+639268247123")) {
+            //if(sender.equals("+639268247123")) {
                 DatabaseHelper.putSmsToDatabase(timestamp, lat, lng, severity, cause, context);
                 //start activity
-                Intent i = new Intent();
-                i.setClassName("com.example.sony.test3", "com.example.sony.test3.activity_offline_simple");
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
-                //addMarkers.update_location();
 
-            }
+                //Intent i = new Intent();
+                //i.setClassName("com.example.sony.test3", "com.example.sony.test3.activity_offline_simple");
+                //i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                //context.startActivity(i);
+
+                addMarkers.update_location();
+
+            //}
 
         }
 

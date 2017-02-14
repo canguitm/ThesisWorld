@@ -107,7 +107,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showMessage(String title, String Message){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new
+                AlertDialog.Builder(this);
         builder.setCancelable(true);
         builder.setTitle(title);
         builder.setMessage(Message);
@@ -155,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
             getPermissionToReadSMS();
         } else {
 
+
             if (SeverityRadioButton1.isChecked())
                 severityResult="Light";
             else if (SeverityRadioButton2.isChecked())
@@ -173,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
             //Change number to SMS gateway number
             //smsManager.sendTextMessage("+639268247123", null, mydate + "/" + Double.toString(MapsActivity.getLong()) + "/" + Double.toString(MapsActivity.getLat()) + "/" + radioSeverityButton.getText().toString() + "/" + radioCauseButton.getText().toString(), null, null);
             // Toast.makeText(this, "Message send!", Toast.LENGTH_SHORT).show();
-            smsManager.sendTextMessage("+639268247123", null, mydate + "/" + activity_offline_simple.getLat() + "/" + activity_offline_simple.getLong() + "/" + severityResult + "/" + causeResult, null, null);
+            smsManager.sendTextMessage("+639268247123", null, mydate + "/" + activity_offline_simple.getLat() + "/" + activity_offline_simple.getLong() + "/" + severityResult + "/" + causeResult + "/Report", null, null);
 
             startActivity(new Intent(MainActivity.this, activity_offline_simple.class));
 

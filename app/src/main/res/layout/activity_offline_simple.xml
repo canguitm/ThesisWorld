@@ -28,37 +28,58 @@
         android:paddingRight="25dp"
         android:visibility="gone"/>
 
+
+
+    <LinearLayout
+        android:id="@+id/bottom_navigation"
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="#FAFAFA"
+        android:elevation="8dp"
+        android:orientation="horizontal"
+        android:paddingTop="8dp">
+
+        <Button
+            android:id="@+id/report"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:drawableTop="@drawable/ic_description_black_48dp"
+            android:text="Report"
+            android:textAllCaps="false"
+            android:textColor="#bdc3c7"
+            android:textSize="12sp"/>
+
+        <Button
+            android:id="@+id/request"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/ic_call_received_black_48dp"
+            android:text="Receive"
+            android:textAllCaps="false"
+            android:textColor="#bdc3c7"
+            android:onClick="onRequestClick"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/location_toggle_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
         app:srcCompat="@drawable/ic_my_location_24dp"
         tools:ignore="VectorDrawableCompat"
         app:backgroundTint="@color/colorAccent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
         android:layout_margin="10dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="report"
-        android:id="@+id/report"
-        android:layout_alignTop="@+id/request"
-        android:layout_toLeftOf="@+id/request"
-        android:layout_toStartOf="@+id/request" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="request"
-        android:id="@+id/request"
-        android:hint="request"
-        android:layout_alignBottom="@+id/location_toggle_fab"
-        android:layout_centerHorizontal="true"
-        android:onClick="onRequestClick"/>
-
-
 </RelativeLayout>

@@ -8,11 +8,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -24,11 +26,16 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.MapboxAccountManager;
@@ -57,6 +64,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 public class activity_offline_simple extends AppCompatActivity {
 
@@ -246,39 +254,33 @@ public class activity_offline_simple extends AppCompatActivity {
     }
 
     private void downloadRegionDialog() {
-        // Set up download interaction. Display a dialog
-        // when the user clicks download button and require
-        // a user-provided region name
         AlertDialog.Builder builder = new AlertDialog.Builder(activity_offline_simple.this);
+        builder.setTitle(getString(R.string.downloadmap_title));
+        builder.setMessage(getString(R.string.downloadmap_message));
 
-
-
-        // Build the dialog box
-        builder.setTitle("Download the CDO Map")
-                .setPositiveButton("Download", new DialogInterface.OnClickListener() {
+        String positiveText = getString(android.R.string.ok);
+        builder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String regionName = "CDO";
-                        // Require a region name to begin the download.
-                        // If the user-provided string is empty, display
-                        // a toast message and do not begin download.
-                        if (regionName.length() == 0) {
-                            Toast.makeText(activity_offline_simple.this, "Region name cannot be empty.", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // Begin download process
-                            downloadRegion(regionName);
-                        }
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
+                        downloadRegion(regionName);
+
                     }
                 });
 
-        // Display the dialog
-        builder.show();
+        String negativeText = getString(android.R.string.cancel);
+        builder.setNegativeButton(negativeText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // negative button logic
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        // display dialog
+        dialog.show();
     }
 
     private void downloadRegion(final String regionName) {
@@ -341,7 +343,7 @@ public class activity_offline_simple extends AppCompatActivity {
 
                 if (status.isComplete()) {
                     // Download complete
-                    endProgress("Region downloaded successfully.");
+                    endProgress("CDO map downloaded successfully.");
                     return;
                 } else if (status.isRequiredResourceCountPrecise()) {
                     // Switch to determinate state
@@ -579,20 +581,38 @@ public class activity_offline_simple extends AppCompatActivity {
     }
 
     public void onRequestClick(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity_offline_simple.this);
+        builder.setTitle(getString(R.string.request_title));
+        builder.setMessage(getString(R.string.request_message));
 
-            SmsManager smsManager = SmsManager.getDefault();
-        //+639283148474 - sms server, +639057767601 -mark
-            smsManager.sendTextMessage("+639268241111", null, "Request", null, null);
-            Toast.makeText(activity_offline_simple.this, "Request Sent", Toast.LENGTH_SHORT).show();
+        String positiveText = getString(android.R.string.ok);
+        builder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SmsManager smsManager = SmsManager.getDefault();
+                        //+639283148474 - sms server, +639057767601 -mark
+                        smsManager.sendTextMessage("+639283148474", null, "Request", null, null);
+                        Toast.makeText(activity_offline_simple.this, "Request Sent", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
+        String negativeText = getString(android.R.string.cancel);
+        builder.setNegativeButton(negativeText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // negative button logic
+                    }
+                });
 
-
+        AlertDialog dialog = builder.create();
+        // display dialog
+        dialog.show();
 
     }
 
-    public void update_location()
-    {
-
+    public void update_location() {
 
         Cursor res = myDb.getAllData();
         if (res.getCount() == 0){
@@ -603,7 +623,7 @@ public class activity_offline_simple extends AppCompatActivity {
 
         StringBuffer buffer = new StringBuffer();
         while (res.moveToNext()){
-            Integer id = Integer.parseInt(res.getString(0));
+            final Integer id = Integer.parseInt(res.getString(0));
             final String timestamp = res.getString(1);
             final Double lat = Double.parseDouble(res.getString(2));
             final Double lang = Double.parseDouble(res.getString(3));
@@ -615,25 +635,116 @@ public class activity_offline_simple extends AppCompatActivity {
 
                 @Override
                 public void onMapReady(MapboxMap mapboxMap) {
+
+                    mapboxMap.setInfoWindowAdapter(new MapboxMap.InfoWindowAdapter() {
+                        @Nullable
+                        @Override
+                        public View getInfoWindow(@NonNull final Marker marker) {
+                            FrameLayout parent = new FrameLayout(activity_offline_simple.this);
+                            parent.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                                    FrameLayout.LayoutParams.MATCH_PARENT));
+                            //parent.setOrientation(FrameLayout.VERTICAL);
+
+                            StringTokenizer tokens = new StringTokenizer(marker.getTitle(), "/");
+                            String timestampToken = tokens.nextToken();
+                            Double latToken = Double.parseDouble(tokens.nextToken());
+                            Double lngToken = Double.parseDouble(tokens.nextToken());
+                            String severityToken = tokens.nextToken();
+                            String causeToken = tokens.nextToken();
+
+                            TextView textView1 = new TextView(activity_offline_simple.this);
+                            //textView.setText(timestampToken+latToken+lngToken+severityToken+causeToken);
+                            textView1.setText(severity + " Traffic");
+                            textView1.setTextSize(22);
+                            textView1.setGravity(Gravity.CENTER_HORIZONTAL);
+                            textView1.setTextColor(Color.parseColor("#00000c"));
+                            textView1.setPadding(-120,370,5,5);
+
+                            TextView textView2 = new TextView(activity_offline_simple.this);
+                            textView2.setText(timestamp + "\n" + cause);
+                            textView2.setGravity(Gravity.CENTER_HORIZONTAL);
+                            textView2.setTextColor(Color.parseColor("#A4A6A6"));
+                            textView2.setPadding(5,470,5,5);
+
+                            TextView textView3 = new TextView(activity_offline_simple.this);
+                            textView3.setText("Bogus Report");
+                            textView3.setGravity(Gravity.CENTER_HORIZONTAL);
+                            textView3.setTextColor(Color.parseColor("#73CEEF"));
+                            textView3.setPadding(5-120,550,5,5);
+
+                            ImageView infoWindow = new ImageView (activity_offline_simple.this);
+                            infoWindow.setImageDrawable(ContextCompat.getDrawable(
+                                    activity_offline_simple.this, R.drawable.info_window));
+                            infoWindow.setPadding(0,330,0,0);
+
+                            Button bogus = new Button(activity_offline_simple.this);
+
+                            //Button bogus = new Button(activity_offline_simple.this);
+                            textView3.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(activity_offline_simple.this);
+                                    builder.setTitle(getString(R.string.dialog_title));
+                                    builder.setMessage(getString(R.string.dialog_message));
+
+                                    String positiveText = getString(android.R.string.ok);
+                                    builder.setPositiveButton(positiveText,
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    SmsManager smsManager = SmsManager.getDefault();
+                                                    smsManager.sendTextMessage("+639268247123", null, marker.getTitle() + "/Bogus", null, null);
+                                                    Toast.makeText(activity_offline_simple.this, "Verification Sent", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
+                                    String negativeText = getString(android.R.string.cancel);
+                                    builder.setNegativeButton(negativeText,
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    // negative button logic
+                                                }
+                                            });
+
+                                    AlertDialog dialog = builder.create();
+                                    // display dialog
+                                    dialog.show();
+                                }
+                            });
+
+                            //textView.setLayoutParams(new android.view.ViewGroup.LayoutParams(150, 100));
+                           // bogus.setLayoutParams(new android.view.ViewGroup.LayoutParams(150, 100));
+                            infoWindow.setLayoutParams(new android.view.ViewGroup.LayoutParams(600, 700));
+
+                            parent.addView(infoWindow);
+                            parent.addView(textView1);
+                            parent.addView(textView2);
+                            parent.addView(textView3);
+                            //parent.addView(bogus);
+                            return parent;
+                        }
+                    });
+
                     //LIGHT
                     if (severity.equalsIgnoreCase("Light") && cause.equalsIgnoreCase("Weather")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
-                                .title(cause)
+                                .title(timestamp + "/" + lat + "/" + lang + "/" + severity + "/" + cause)
                                 .snippet(timestamp)
                                 .icon(icon_green_weather));
                     }
                     if (severity.equalsIgnoreCase("Light") && cause.equalsIgnoreCase("Accident")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
-                                .title(cause)
+                                .title(timestamp + "/" + lat + "/" + lang + "/" + severity + "/" + cause)
                                 .snippet(timestamp)
-                                .icon(icon_green_accident));/////
+                                .icon(icon_green_accident));
                     }
                     if (severity.equalsIgnoreCase("Light") && cause.equalsIgnoreCase("Unknown")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
-                                .title(cause)
+                                .title(timestamp + "/" + lat + "/" + lang + "/" + severity + "/" + cause)
                                 .snippet(timestamp)
                                 .icon(icon_green_unknown));
                     }
@@ -642,21 +753,21 @@ public class activity_offline_simple extends AppCompatActivity {
                     if (severity.equalsIgnoreCase("Moderate") && cause.equalsIgnoreCase("Weather")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
-                                .title(cause)
+                                .title(timestamp + "/" + lat + "/" + lang + "/" + severity + "/" + cause)
                                 .snippet(timestamp)
                                 .icon(icon_yellow_weather));/////
                     }
                     if (severity.equalsIgnoreCase("Moderate") && cause.equalsIgnoreCase("Accident")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
-                                .title(cause)
+                                .title(timestamp + "/" + lat + "/" + lang + "/" + severity + "/" + cause)
                                 .snippet(timestamp)
                                 .icon(icon_yellow_accident));
                     }
                     if (severity.equalsIgnoreCase("Moderate") && cause.equalsIgnoreCase("Unknown")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
-                                .title(cause)
+                                .title(timestamp + "/" + lat + "/" + lang + "/" + severity + "/" + cause)
                                 .snippet(timestamp)
                                 .icon(icon_yellow_unknown));
                     }
@@ -665,24 +776,38 @@ public class activity_offline_simple extends AppCompatActivity {
                     if (severity.equalsIgnoreCase("Heavy") && cause.equalsIgnoreCase("Weather")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
-                                .title(cause)
+                                .title(timestamp + "/" + lat + "/" + lang + "/" + severity + "/" + cause)
                                 .snippet(timestamp)
                                 .icon(icon_red_weather));/////
                     }
                     if (severity.equalsIgnoreCase("Heavy") && cause.equalsIgnoreCase("Accident")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
-                                .title(cause)
+                                .title(timestamp + "/" + lat + "/" + lang + "/" + severity + "/" + cause)
                                 .snippet(timestamp)
                                 .icon(icon_red_accident));
                     }
                     if (severity.equalsIgnoreCase("Heavy") && cause.equalsIgnoreCase("Unknown")) {
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lang))
-                                .title(cause)
+                                .title(timestamp + "/" + lat + "/" + lang + "/" + severity + "/" + cause)
                                 .snippet(timestamp)
                                 .icon(icon_red_unknown));
                     }
+/*
+                    mapboxMap.setOnMarkerClickListener(new MapboxMap.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(@NonNull Marker marker) {
+                           // if (Integer.toString(id) == marker.getTitle()) {
+                                Toast.makeText(activity_offline_simple.this, marker.getTitle(), Toast.LENGTH_LONG).show();
+
+                            //}
+                            return true;
+                        }
+                    });
+                    */
+
+
                     //ELSE
 /*
                     else {

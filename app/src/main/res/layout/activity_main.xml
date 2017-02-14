@@ -9,7 +9,6 @@
     android:background="#FFFFFF">
 
 
-
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -52,6 +51,7 @@
             android:button="@null"/>
     </RadioGroup>
 
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -60,9 +60,8 @@
         android:id="@+id/textView2"
         android:fontFamily="sans-serif"
         android:gravity="center_horizontal"
-        android:layout_below="@+id/severity"
-        android:layout_marginTop="50dp"
-        android:paddingTop="5dp"
+        android:layout_below="@+id/line"
+        android:layout_marginTop="20dp"
         android:paddingBottom="5dp"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
@@ -109,7 +108,7 @@
         android:id="@+id/textView"
         android:fontFamily="sans-serif"
         android:gravity="center_horizontal"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:layout_marginLeft="50dp"
@@ -120,15 +119,15 @@
     <Button
         android:textColor="#FFFFFF"
         android:textSize="22sp"
-        android:layout_width="250dp"
+        android:layout_width="320dp"
         android:layout_height="74dp"
         android:background="@drawable/buttonshape"
+        android:layout_centerHorizontal="true"
         android:text="Send"
         android:id="@+id/send"
-        android:layout_below="@+id/cause"
+        android:layout_below="@+id/label2"
         android:onClick="onSendClick"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="15dp"
         />
 
     <View
@@ -136,8 +135,29 @@
         android:layout_width="200dp"
         android:layout_height=".5dp"
         android:background="#bdc3c7"
-        android:layout_below="@+id/severity"
-        android:layout_centerHorizontal="true"/>
+        android:layout_below="@+id/label1"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/line"/>
 
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text=" LIGHT               MODERATE             HEAVY"
+        android:gravity="center_horizontal"
+        android:layout_below="@id/severity"
+        android:id="@+id/label1"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text=" WEATHER             ACCIDENT          UNKNOWN"
+        android:gravity="center_horizontal"
+        android:layout_below="@id/cause"
+        android:id="@+id/label2"
+        />
 
 </RelativeLayout>
