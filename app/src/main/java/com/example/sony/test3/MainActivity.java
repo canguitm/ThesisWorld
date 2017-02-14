@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
             //Change number to SMS gateway number
             //smsManager.sendTextMessage("+639268247123", null, mydate + "/" + Double.toString(MapsActivity.getLong()) + "/" + Double.toString(MapsActivity.getLat()) + "/" + radioSeverityButton.getText().toString() + "/" + radioCauseButton.getText().toString(), null, null);
             // Toast.makeText(this, "Message send!", Toast.LENGTH_SHORT).show();
-            smsManager.sendTextMessage("+639268247123", null, mydate + "/" + activity_offline_simple.getLat() + "/" + activity_offline_simple.getLong() + "/" + severityResult + "/" + causeResult + "/Report", null, null);
+            smsManager.sendTextMessage("+639283148474", null, mydate + "/" + activity_offline_simple.getLat() + "/" + activity_offline_simple.getLong() + "/" + severityResult + "/" + causeResult + "/Report", null, null);
 
             startActivity(new Intent(MainActivity.this, activity_offline_simple.class));
 

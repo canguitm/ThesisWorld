@@ -653,33 +653,36 @@ public class activity_offline_simple extends AppCompatActivity {
                             String causeToken = tokens.nextToken();
 
                             TextView textView1 = new TextView(activity_offline_simple.this);
-                            //textView.setText(timestampToken+latToken+lngToken+severityToken+causeToken);
-                            textView1.setText(severity + " Traffic");
+                            textView1.setText(severityToken + " Traffic");
                             textView1.setTextSize(22);
                             textView1.setGravity(Gravity.CENTER_HORIZONTAL);
                             textView1.setTextColor(Color.parseColor("#00000c"));
-                            textView1.setPadding(-120,370,5,5);
+                            textView1.setPadding(5,430,5,5);
 
                             TextView textView2 = new TextView(activity_offline_simple.this);
-                            textView2.setText(timestamp + "\n" + cause);
+                            textView2.setText(timestampToken);
                             textView2.setGravity(Gravity.CENTER_HORIZONTAL);
                             textView2.setTextColor(Color.parseColor("#A4A6A6"));
-                            textView2.setPadding(5,470,5,5);
+                            textView2.setPadding(5,510,5,5);
+
+                            TextView textView4 = new TextView(activity_offline_simple.this);
+                            textView4.setText(" Traffic Cause: "+causeToken);
+                            textView4.setGravity(Gravity.CENTER_HORIZONTAL);
+                            textView4.setTextColor(Color.parseColor("#A4A6A6"));
+                            textView4.setPadding(5,560,5,5);
+
 
                             TextView textView3 = new TextView(activity_offline_simple.this);
                             textView3.setText("Bogus Report");
                             textView3.setGravity(Gravity.CENTER_HORIZONTAL);
                             textView3.setTextColor(Color.parseColor("#73CEEF"));
-                            textView3.setPadding(5-120,550,5,5);
+                            textView3.setPadding(5,610,5,5);
 
                             ImageView infoWindow = new ImageView (activity_offline_simple.this);
                             infoWindow.setImageDrawable(ContextCompat.getDrawable(
                                     activity_offline_simple.this, R.drawable.info_window));
                             infoWindow.setPadding(0,330,0,0);
 
-                            Button bogus = new Button(activity_offline_simple.this);
-
-                            //Button bogus = new Button(activity_offline_simple.this);
                             textView3.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -693,7 +696,7 @@ public class activity_offline_simple extends AppCompatActivity {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     SmsManager smsManager = SmsManager.getDefault();
-                                                    smsManager.sendTextMessage("+639268247123", null, marker.getTitle() + "/Bogus", null, null);
+                                                    smsManager.sendTextMessage("+639283148474", null, marker.getTitle() + "/Bogus", null, null);
                                                     Toast.makeText(activity_offline_simple.this, "Verification Sent", Toast.LENGTH_SHORT).show();
                                                 }
                                             });
@@ -713,15 +716,13 @@ public class activity_offline_simple extends AppCompatActivity {
                                 }
                             });
 
-                            //textView.setLayoutParams(new android.view.ViewGroup.LayoutParams(150, 100));
-                           // bogus.setLayoutParams(new android.view.ViewGroup.LayoutParams(150, 100));
-                            infoWindow.setLayoutParams(new android.view.ViewGroup.LayoutParams(600, 700));
+                            infoWindow.setLayoutParams(new android.view.ViewGroup.LayoutParams(650, 850));
 
                             parent.addView(infoWindow);
                             parent.addView(textView1);
                             parent.addView(textView2);
+                            parent.addView(textView4);
                             parent.addView(textView3);
-                            //parent.addView(bogus);
                             return parent;
                         }
                     });

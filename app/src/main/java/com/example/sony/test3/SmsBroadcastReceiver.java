@@ -50,7 +50,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
                 sender = address;
 
-                //if(address.equals("+639268247123")) {
+                if(address.equals("+639283148474")) {
                     StringTokenizer tokens = new StringTokenizer(smsBody, "/");
                     timestamp = tokens.nextToken();
                     lat = Double.parseDouble(tokens.nextToken());
@@ -59,10 +59,10 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                     cause = tokens.nextToken();
 
                    // Toast.makeText(getContext(), "Received New Traffic Report", Toast.LENGTH_LONG).show();
-                //}
+                }
             }
 
-            //if(sender.equals("+639268247123")) {
+            if(sender.equals("+639283148474")) {
                 DatabaseHelper.putSmsToDatabase(timestamp, lat, lng, severity, cause, context);
                 //start activity
 
@@ -73,7 +73,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
                 addMarkers.update_location();
 
-            //}
+            }
 
         }
 
